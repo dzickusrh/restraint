@@ -2,7 +2,11 @@
 
 . /etc/os-release
 
-# RHEL 8 and newer use dnf as default
-if [ 0"$(echo $VERSION_ID | cut -d'.' -f1)" -ge 8 ]; then
+if [ -f "/run/ostree-booted" ];then
+    # OSTree based filesystems are read-only and install with rpm-ostree
+    RSTRNT_PKG_CMD=${RSTRNT_PKG_CMD:-rpm-ostree}
+    RSTRNT_PKG_ARGS=${RSTRNT_PKG_ARGS:--y --apply-live --idempotent --allow-inactive}
+elif [ 0"$(echo $VERSION_ID | cut -d'.' -f1)" -ge 8 ]; then
+    # RHEL 8 and newer use dnf as default
     RSTRNT_PKG_CMD=${RSTRNT_PKG_CMD:-dnf}
 fi
